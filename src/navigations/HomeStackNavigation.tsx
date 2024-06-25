@@ -4,7 +4,7 @@ import Home from '../screens/Home'
 import MovieDetail from '../screens/MovieDetail'
 
 const Stack = createNativeStackNavigator()
-const HomeStackNavigation = () => {
+const HomeStackNavigator = () => {
   return (
     <Stack.Navigator initialRouteName="Home">
       <Stack.Screen
@@ -12,13 +12,9 @@ const HomeStackNavigation = () => {
         component={Home}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
-        name="MovieDetail"
-        component={MovieDetail}
-        options={{ headerShown: false }}
-      />
+      <Stack.Screen name="MovieDetail" component={MovieDetail} />
     </Stack.Navigator>
   )
 }
 
-export default HomeStackNavigation
+export default HomeStackNavigator
