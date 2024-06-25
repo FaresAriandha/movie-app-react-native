@@ -13,7 +13,10 @@ import { useNavigation, StackActions } from '@react-navigation/native'
 
 const MovieItem = ({ movie, size, coverType }: MovieItemProps): JSX.Element => {
   const navigation = useNavigation()
-  const pushAction = StackActions.push('MovieDetail', { id: movie.id })
+  const pushAction = StackActions.push('MovieDetail', {
+    id: movie.id,
+    movieName: movie.title,
+  })
 
   return (
     <TouchableOpacity

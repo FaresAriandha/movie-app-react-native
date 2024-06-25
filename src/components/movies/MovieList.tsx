@@ -43,8 +43,6 @@ const MovieList = ({ title, path, coverType }: MovieListProps): JSX.Element => {
       })
   }
 
-  console.log(movies)
-
   return (
     <View>
       <View style={styles.header}>
