@@ -46,3 +46,8 @@ export interface MovieItemProps {
   coverType: 'poster' | 'backdrop'
   margin: { marginVertical: number; marginHorizontal: number }
 }
+
+export interface Category {
+  id: number
+  name: string
+}
