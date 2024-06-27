@@ -14,6 +14,7 @@ import { Movie } from '../types/app'
 import { API_ACCESS_TOKEN } from '@env'
 import { format } from 'date-fns'
 import { useNavigation } from '@react-navigation/native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import MovieList from '../components/movies/MovieList'
 
 const MovieDetail = ({ route }: any): JSX.Element => {
@@ -22,11 +23,15 @@ const MovieDetail = ({ route }: any): JSX.Element => {
   const [status, setStatus] = useState('')
   const [isFavorite, setIsFavorite] = useState(false)
   const [movieDetail, setMovieDetail] = useState<Movie>({})
+
   useEffect(() => {
     navigation.setOptions({ title: movieName })
     getMovieByMovieID()
+    getDataFromStorageFav()
+    getStatusIsFavoriteMovie()
   }, [])
-  const getMovieByMovieID = (): void => {
+
+  const getMovieByMovieID = async (): Promise<void> => {
     setStatus('loading')
     const url = `https://api.themoviedb.org/3/movie/${id}`
     const options = {
@@ -48,6 +53,75 @@ const MovieDetail = ({ route }: any): JSX.Element => {
       })
   }
 
+  const getDataFromStorageFav = async (): Promise<Movie[] | undefined> => {
+    try {
+      const initialData: string | null =
+        await AsyncStorage.getItem('@FavoriteList')
+      if (initialData !== null) {
+        const favMovieList: Movie[] = JSON.parse(initialData)
+        return favMovieList
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const getStatusIsFavoriteMovie = async (): Promise<void> => {
+    const favMovieList = await getDataFromStorageFav()
+    if (favMovieList && favMovieList.length > 0) {
+      favMovieList.forEach((movie) => {
+        if (movie.id === id) {
+          setIsFavorite(true)
+        }
+      })
+    }
+  }
+
+  const addFavoriteMovie = async (): Promise<void> => {
+    try {
+      const initialData: string | null =
+        await AsyncStorage.getItem('@FavoriteList')
+
+      let favMovieList: Movie[] = []
+
+      if (initialData !== null) {
+        favMovieList = [...JSON.parse(initialData), movieDetail]
+      } else {
+        favMovieList = [movieDetail]
+      }
+
+      await AsyncStorage.setItem('@FavoriteList', JSON.stringify(favMovieList))
+      setIsFavorite(true)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const removeFavoriteMovie = async (): Promise<void> => {
+    const favMovieList = await getDataFromStorageFav()
+    if (favMovieList) {
+      try {
+        const currentData = favMovieList.filter((movie) => movie.id !== id)
+        await AsyncStorage.setItem('@FavoriteList', JSON.stringify(currentData))
+        setIsFavorite(false)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }
+
+  const handleClickFavBtn = async () => {
+    if (isFavorite) {
+      removeFavoriteMovie()
+    } else {
+      addFavoriteMovie()
+    }
+
+    // const initialData: string | null =
+    //   await AsyncStorage.getItem('@FavoriteList')
+    // console.log('ini handle data : ' + initialData)
+  }
+
   if (status === 'loading') {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -56,6 +130,7 @@ const MovieDetail = ({ route }: any): JSX.Element => {
     )
   } else if (status === 'success') {
     const formattedDate = format(movieDetail.release_date, 'EEE MMM dd yyyy')
+
     return (
       <View
         style={{
@@ -94,11 +169,7 @@ const MovieDetail = ({ route }: any): JSX.Element => {
                     </Text>
                   </View>
                 </View>
-                <TouchableOpacity
-                  onPress={() => {
-                    setIsFavorite(!isFavorite)
-                  }}
-                >
+                <TouchableOpacity onPress={handleClickFavBtn}>
                   <FontAwesome
                     name={`${isFavorite ? 'heart' : 'heart-o'}`}
                     size={20}

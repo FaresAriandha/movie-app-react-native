@@ -62,6 +62,7 @@ const MovieList = ({ title, path, coverType }: MovieListProps): JSX.Element => {
             movie={item}
             size={coverImageSize[coverType]}
             coverType={coverType}
+            margin={{ marginVertical: 0, marginHorizontal: 0 }}
           />
         )}
         keyExtractor={(item) => item.id.toString()}

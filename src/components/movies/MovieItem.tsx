@@ -11,7 +11,12 @@ import { LinearGradient } from 'expo-linear-gradient'
 import type { MovieItemProps } from '../../types/app'
 import { useNavigation, StackActions } from '@react-navigation/native'
 
-const MovieItem = ({ movie, size, coverType }: MovieItemProps): JSX.Element => {
+const MovieItem = ({
+  movie,
+  size,
+  coverType,
+  margin,
+}: MovieItemProps): JSX.Element => {
   const navigation = useNavigation()
   const pushAction = StackActions.push('MovieDetail', {
     id: movie.id,
@@ -26,7 +31,7 @@ const MovieItem = ({ movie, size, coverType }: MovieItemProps): JSX.Element => {
     >
       <ImageBackground
         resizeMode="cover"
-        style={[size, styles.backgroundImage]}
+        style={[size, margin, styles.backgroundImage]}
         imageStyle={styles.backgroundImageStyle}
         source={{
           uri: `https://image.tmdb.org/t/p/w500${
