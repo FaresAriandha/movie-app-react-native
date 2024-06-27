@@ -10,19 +10,19 @@ import {
 } from 'react-native'
 import { FontAwesome } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
-import { Movie } from '../types/app'
+import { Movie } from '../../types/app'
 import { API_ACCESS_TOKEN } from '@env'
 import { format } from 'date-fns'
 import { useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import MovieList from '../components/movies/MovieList'
+import MovieList from './MovieList'
 
-const MovieDetail = ({ route }: any): JSX.Element => {
+const MovieDetail = ({ route }: any): JSX.Element | undefined => {
   const navigation = useNavigation()
   const { id, movieName } = route.params
   const [status, setStatus] = useState('')
   const [isFavorite, setIsFavorite] = useState(false)
-  const [movieDetail, setMovieDetail] = useState<Movie>({})
+  const [movieDetail, setMovieDetail] = useState<Movie>()
 
   useEffect(() => {
     navigation.setOptions({ title: movieName })
@@ -116,10 +116,6 @@ const MovieDetail = ({ route }: any): JSX.Element => {
     } else {
       addFavoriteMovie()
     }
-
-    // const initialData: string | null =
-    //   await AsyncStorage.getItem('@FavoriteList')
-    // console.log('ini handle data : ' + initialData)
   }
 
   if (status === 'loading') {
